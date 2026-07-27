@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use } from "react";
+import React from "react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -8,9 +8,7 @@ import { useState, useEffect } from "react";
 type Props = {};
 
 function SearchBar({}: Props) {
-  const [isExpandedSearch, setIsExpandedSearch] = useState(
-    window.innerWidth > 440,
-  );
+  const [isExpandedSearch, setIsExpandedSearch] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
