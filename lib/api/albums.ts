@@ -13,6 +13,8 @@ const AlbumResponseSchema = createResponseSchema(AlbumSchema);
 export async function getAlbumsByArtistName(artistName: string) {
   const response = await get(searchAlbumsByArtistName(artistName));
 
+  console.log("response", response);
+
   return AlbumResponseSchema.parse(response);
 }
 
