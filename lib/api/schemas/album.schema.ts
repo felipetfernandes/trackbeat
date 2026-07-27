@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const AlbumSchema = z.object({
-  wrapperType: z.literal("collection"),
+  wrapperType: z.string(),
 
-  collectionType: z.literal("Album"),
+  collectionType: z.string(),
 
   collectionId: z.number(),
   collectionName: z.string(),

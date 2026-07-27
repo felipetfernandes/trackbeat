@@ -5,11 +5,13 @@ import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 
-type Props = {};
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
+};
 
-function SearchBar({}: Props) {
+function SearchBar({ value, onChange }: Props) {
   const [isExpandedSearch, setIsExpandedSearch] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const checkWidth = () => setIsExpandedSearch(window.innerWidth > 440);
@@ -20,20 +22,20 @@ function SearchBar({}: Props) {
   }, []);
 
   return (
-    <div className={clsx("flex items-center w-full max-w-md")}>
+    <div className={clsx("flex items-center w-full max-w-4xl mb-16")}>
       <input
         type="text"
         placeholder={
           isExpandedSearch ? "Search for a Song, Artist or Album..." : "Search..."
         }
         className={clsx(
-          "bg-zinc-100/20 backdrop-blur-md w-full text-zinc-200",
+          "bg-white/10 backdrop-blur-md w-full text-zinc-200",
           "placeholder:text-zinc-400",
-          "border border-zinc-400 shadow-black p-2.5 pr-10 rounded-md",
-          "focus:outline-none  focus:border-emerald-500 focus:border-2",
+          "border border-zinc-400/40 shadow-black p-2.5 pr-10 rounded-md",
+          "focus:outline-none  focus:border-emerald-500",
         )}
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
       />
       <Search className={clsx("text-zinc-400 pointer-events-none -ml-8")} />
     </div>
