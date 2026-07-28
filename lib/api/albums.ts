@@ -5,15 +5,13 @@ import {
   searchAlbumsByArtistName,
 } from "./routes";
 
-import { AlbumSchema } from "./schemas/album.schema";
-import { createResponseSchema } from "./schemas/response.schema";
-
-const AlbumResponseSchema = createResponseSchema(AlbumSchema);
+import {
+  AlbumResponseSchema,
+  AlbumWithTracksResponseSchema,
+} from "./schemas/response.schema";
 
 export async function getAlbumsByArtistName(artistName: string) {
   const response = await get(searchAlbumsByArtistName(artistName));
-
-  console.log("response", response);
 
   return AlbumResponseSchema.parse(response);
 }
@@ -24,8 +22,9 @@ export async function getAlbumsByArtistId(artistId: string) {
   return AlbumResponseSchema.parse(response);
 }
 
-export async function getAlbumById(albumId: string) {
-  const response = await get(lookupById(albumId));
+export async function getAlbumById(albumId: number | null) {
+  if (!albumId) return null;
+  const response = await get(lookupById(albumId, "song"));
 
-  return AlbumResponseSchema.parse(response);
+  return AlbumWithTracksResponseSchema.parse(response);
 }

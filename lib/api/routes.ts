@@ -6,6 +6,6 @@ const searchAlbumsByArtistName = (artistName: string) =>
 const lookupAlbumsByArtistId = (artistId: string) =>
   `${API_BASE_URL}lookup?id=${artistId}&entity=album`;
 
-const lookupById = (id: string) => `${API_BASE_URL}lookup?id=${id}`;
+const lookupById = (id: number, type: "song" | "album") => `${API_BASE_URL}lookup?id=${id}&entity=${type}`;
 
 export { searchAlbumsByArtistName, lookupAlbumsByArtistId, lookupById };

@@ -1,14 +1,15 @@
 import { ApiAlbum } from "@/lib/api/schemas/album.schema";
 import clsx from "clsx";
-import { Play } from "lucide-react";
+import { ListMusic } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
 type Props = {
   album: ApiAlbum;
+  selectAlbumId: (albumId: number) => void;
 };
 
-function AlbumCard({ album }: Props) {
+function AlbumCard({ album, selectAlbumId }: Props) {
   return (
     <div
       className={clsx(
@@ -38,8 +39,9 @@ function AlbumCard({ album }: Props) {
       </div>
 
       <div className="flex justify-end items-end">
-        <button className="focus:outline-none transition-all duration-300 hover:scale-110 active:scale-95 bg-emerald-400 rounded-md p-2 drop-shadow-[0_0_4px_rgba(0,203,116,1))] hover:drop-shadow-[0_0_8px_rgba(52,211,153,1)]">
-          <Play className="fill-black stroke-black w-3 h-3" />
+        <button className="focus:outline-none transition-all duration-300 hover:scale-110 active:scale-95 bg-emerald-400 rounded-md p-2 drop-shadow-[0_0_4px_rgba(0,203,116,1)] hover:drop-shadow-[0_0_8px_rgba(52,211,153,1)]"
+        onClick={() => selectAlbumId(album.collectionId)}>
+          <ListMusic className="fill-black stroke-black size-4" />
         </button>
       </div>
     </div>

@@ -14,7 +14,7 @@ function Grid({ children }: Props) {
         sm:grid-cols-2
         lg:grid-cols-3
         max-w-4xl
-        max-h-[60vh]
+        max-h-[40vh]
         overflow-y-auto
         scrollbar-thin
         scrollbar-thumb-zinc-700
