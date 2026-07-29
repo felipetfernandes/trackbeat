@@ -12,11 +12,13 @@ import { Undo2 } from "lucide-react";
 import clsx from "clsx";
 import Player from "@/components/Player";
 import { ApiTrack } from "@/lib/api/schemas/track.schema";
+import { getFavorites } from "@/lib/db/favorites";
 
 export default function Home() {
   const [search, setSearch] = useState("");
   const [selectedAlbumId, setSelectedAlbumId] = useState<number | null>(null);
   const [currentTrack, setCurrentTrack] = useState<ApiTrack | null>(null);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   const debouncedSearch = useDebounce(search);
 
@@ -31,6 +33,15 @@ export default function Home() {
   const album = albumData?.results[0];
   const tracks: ApiTrack[] | undefined = albumData?.results.slice(1);
 
+  useEffect(() => {
+    async function loadFavorites() {
+      const data = await getFavorites();
+      setFavorites(new Set(data.map(({trackId}) => trackId)));           
+    }
+
+    loadFavorites();
+  }, []);
+
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-[url('/background.png')] bg-center bg-cover bg-no-repeat font-sans">
       <main className="flex flex-1 w-full bg-black/10 backdrop-blur-md flex-col items-center justify-between py-32 px-16 sm:items-start">
@@ -38,29 +49,41 @@ export default function Home() {
 
         {album && (
           <div className="flex flex-row items-center justify-between w-full max-w-4xl mb-16">
-            <h1 className="text-2xl font-bold text-white mb-4">{album?.collectionName}</h1>
-            <button onClick={() => (setSelectedAlbumId(null))}><Undo2 className={clsx("text-white hover:text-emerald-400")} /></button>
+            <h1 className="text-2xl font-bold text-white mb-4">
+              {album?.collectionName}
+            </h1>
+            <button onClick={() => setSelectedAlbumId(null)}>
+              <Undo2 className={clsx("text-white hover:text-emerald-400")} />
+            </button>
           </div>
         )}
         <Grid>
-          {tracks ?
-            tracks.length > 0 &&
-            tracks.map((track) => (
-              <TrackCard key={track.trackId} track={track} playTrack={setCurrentTrack} />
-            ))
-          : isLoading
-            ? Array.from({ length: 12 }).map((_, index) => (
-                <AlbumCardSkeleton key={index} />
-              ))
-            : data?.results.map((album) => (
-                <AlbumCard
-                  key={album.collectionId}
-                  album={album}
-                  selectAlbumId={setSelectedAlbumId}
+          {tracks
+            ? tracks.length > 0 &&
+              tracks.map((track) => (
+                <TrackCard
+                  key={track.trackId}
+                  track={track}
+                  playTrack={setCurrentTrack}
                 />
-              ))}
+              ))
+            : isLoading
+              ? Array.from({ length: 12 }).map((_, index) => (
+                  <AlbumCardSkeleton key={index} />
+                ))
+              : data?.results.map((album) => (
+                  <AlbumCard
+                    key={album.collectionId}
+                    album={album}
+                    selectAlbumId={setSelectedAlbumId}
+                  />
+                ))}
         </Grid>
-        <Player track={currentTrack} />
+        <Player
+          track={currentTrack}
+          favorites={favorites}
+          setFavorites={setFavorites}
+        />
       </main>
     </div>
   );

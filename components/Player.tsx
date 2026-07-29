@@ -1,4 +1,5 @@
 import { ApiTrack } from "@/lib/api/schemas/track.schema";
+import { getFavorites, removeFavorite, saveFavorite } from "@/lib/db/favorites";
 import {
   formatDurationFromMs,
   formatDurationFromS,
@@ -21,18 +22,23 @@ import React, { useRef, useState } from "react";
 
 type Props = {
   track: ApiTrack | null;
+  favorites: Set<number>;
+  setFavorites: React.Dispatch<React.SetStateAction<Set<number>>>;
 };
 
-function Player({ track }: Props) {
+function Player({ track, favorites, setFavorites }: Props) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [volume, setVolume] = useState<number>(0.8);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [isMuted, setIsMuted] = useState<boolean>(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [shuffleOn, setShuffleOn] = useState(false);
   const [repeatMode, setRepeatMode] = useState(false);
-
+  
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  if (!track) return null;
+
+  const isLiked = favorites.has(track.trackId);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -56,9 +62,8 @@ function Player({ track }: Props) {
   ) => {
     if (audioRef.current && track) {
       const newTimePercent = parseFloat(event.target.value);
-      const newTime = track?.trackTimeMillis * newTimePercent;
+      const newTime = track.trackTimeMillis * newTimePercent;
       const newTimeInSec = newTime / 1000;
-
       audioRef.current.currentTime = newTimeInSec;
     }
   };
@@ -72,7 +77,25 @@ function Player({ track }: Props) {
     }
   };
 
-  if (track) {
+  const handleFavorite = async () => {
+    if (isLiked) {
+      await removeFavorite(track.trackId);
+      setFavorites((current) => {
+        const next = new Set(current);
+        next.delete(track.trackId);
+        return next;
+      });
+      return;
+    }
+
+    await saveFavorite(track.trackId);
+    setFavorites((current) => {
+      const next = new Set(current);
+      next.add(track.trackId);
+      return next;
+    });
+  };
+
     return (
       <div className={clsx("w-full")}>
         {/* Elemento HTML5 Audio Oculto */}
@@ -120,7 +143,7 @@ function Player({ track }: Props) {
                 className={clsx(
                   "focus:outline-none transition-all duration-300 hover:scale-110 active:scale-95 p-2",
                 )}
-                onClick={() => setIsLiked((prev) => !prev)}
+                onClick={handleFavorite}
               >
                 <Heart
                   className={clsx(
@@ -155,8 +178,6 @@ function Player({ track }: Props) {
                   )}
                 />
               </button>
-
-              {/* Botão de Reproduzir/Pausar com fundo de círculo claro */}
               <button
                 className={clsx(
                   "w-12 h-12 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 transition focus:outline-none",
@@ -169,7 +190,6 @@ function Player({ track }: Props) {
                   <Play className={clsx("size-5 fill-white stroke-white")} />
                 )}
               </button>
-
               <button className={clsx("transition focus:outline-none")}>
                 <SkipForward
                   className={clsx(
@@ -293,7 +313,6 @@ function Player({ track }: Props) {
         </div>
       </div>
     );
-  }
 }
 
 export default Player;
