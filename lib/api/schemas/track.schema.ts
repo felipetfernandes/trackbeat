@@ -21,4 +21,14 @@ export const TrackSchema = z.object({
   trackTimeMillis: z.number(),
 });
 
+export const StoredTrackSchema = z.object({
+  trackId: z.number(),
+  trackName: z.string(),
+  artistName: z.string(),
+  artworkUrl100: z.string().url(),
+  previewUrl: z.string().url(),
+  trackTimeMillis: z.number(),
+});
+
 export type ApiTrack = z.infer<typeof TrackSchema>;
+export type StoredTrack = z.infer<typeof StoredTrackSchema>;

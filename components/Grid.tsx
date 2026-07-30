@@ -11,7 +11,8 @@ function Grid({ children }: Props) {
         grid
         grid-cols-1
         gap-6
-        sm:grid-cols-2
+        sm:grid-cols-1
+        md:grid-cols-2
         lg:grid-cols-3
         max-w-4xl
         max-h-[40vh]

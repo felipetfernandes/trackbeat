@@ -9,14 +9,15 @@ import React from "react";
 
 type Props = {
   track: ApiTrack;
-  playTrack: (track: ApiTrack) => void;
+  handleEnqueue: (track: ApiTrack) => void;
 };
 
-function TrackCard({ track, playTrack }: Props) {
+function TrackCard({ track, handleEnqueue }: Props) {
+  if (!track) return null
   return (
     <div
       className={clsx(
-        "grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-x-4 gap-y-2 items-center p-3 w-full max-w-80",
+        "grid grid-cols-[auto_1fr] grid-rows-[1fr_auto] gap-x-4 gap-y-2 items-center p-3 w-full not-odd:max-w-80",
         "bg-white/10 backdrop-blur-md border border-zinc-400/40 rounded-2xl shadow-lg hover:border-emerald-500 transition-shadow duration-300",
       )}
     >
@@ -25,7 +26,7 @@ function TrackCard({ track, playTrack }: Props) {
         alt={track.trackName}
         width={96}
         height={96}
-        className={clsx("row-span-2 rounded-xl object-cover size-6")}
+        className={clsx("row-span-2 rounded-xl object-cover")}
       />
 
       <div className="flex flex-col justify-center self-start pt-1">
@@ -50,7 +51,7 @@ function TrackCard({ track, playTrack }: Props) {
       <div className="flex justify-end items-end">
         <button
           className="focus:outline-none transition-all duration-300 hover:scale-110 active:scale-95 bg-emerald-400 rounded-md p-2 drop-shadow-[0_0_4px_rgba(0,203,116,1)] hover:drop-shadow-[0_0_8px_rgba(52,211,153,1)]"
-          onClick={() => playTrack(track)}
+          onClick={() => handleEnqueue(track)}
         >
           <Play className="fill-black stroke-black size-4" />
         </button>
